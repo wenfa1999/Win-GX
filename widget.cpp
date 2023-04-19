@@ -199,8 +199,8 @@ void Widget::updateRfid(void)
 
 void Widget::updateCharts(double tmp, double hum)
 {
-    ui->label_tmp->setText("当前室内温度：" + QString::number(tmp));
-    ui->label_hum->setText("当前室内相对湿度：" + QString::number(hum));
+    ui->label_tmp->setText("当前室内温度：" + QString::number(tmp) + "℃");
+    ui->label_hum->setText("当前室内相对湿度：" + QString::number(hum) + "%");
 
     seriesTmp->append(tmpAxisXIndex++, tmp);
     seriesHum->append(humAxisXIndex++, hum);
