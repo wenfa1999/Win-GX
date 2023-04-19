@@ -6,5 +6,7 @@
         <file>images/close.svg</file>
         <file>images/full.svg</file>
         <file>images/normal.svg</file>
+        <file>images/lights_off.svg</file>
+        <file>images/lights_on.svg</file>
     </qresource>
 </RCC>

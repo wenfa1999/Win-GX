@@ -17,6 +17,7 @@
    <string notr="true">/* 设置默认字体 */
 * {
     font-family: &quot;Microsoft YaHei&quot;, Arial, sans-serif;
+	color: black;
 }
 
 QPushButton#btnMaximize {
@@ -36,7 +37,7 @@ QPushButton:hover {
 }
 </string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QHBoxLayout" name="backgroundLayout">
    <property name="leftMargin">
     <number>9</number>
    </property>
@@ -60,6 +61,9 @@ QPushButton:hover {
 </string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="spacing">
+       <number>6</number>
+      </property>
       <item>
        <widget class="QWidget" name="widget_title" native="true">
         <property name="sizePolicy">
@@ -81,8 +85,7 @@ QPushButton:hover {
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">
-</string>
+         <string notr="true"/>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <property name="spacing">
@@ -218,13 +221,200 @@ QPushButton:hover {
        </widget>
       </item>
       <item>
-       <widget class="QWidget" name="widget" native="true"/>
+       <widget class="QWidget" name="widget" native="true">
+        <layout class="QGridLayout" name="gridLayout" rowstretch="1,1" columnstretch="1,1">
+         <property name="spacing">
+          <number>20</number>
+         </property>
+         <item row="0" column="1">
+          <widget class="QWidget" name="widget_RFID" native="true">
+           <property name="styleSheet">
+            <string notr="true">.QWidget{
+border-radius:6px;
+/*薄荷绿*/
+background-color: #5cb3cc;
+}
+
+</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_5">
+            <item>
+             <widget class="QListWidget" name="widget_RfidList"/>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_2">
+              <property name="text">
+               <string>刷卡记录</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QWidget" name="widget_LED" native="true">
+           <property name="styleSheet">
+            <string notr="true">.QWidget{
+border-radius:6px;
+/*薄荷绿*/
+background-color: rgb(32, 127, 76);
+}
+
+</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,1">
+            <item>
+             <widget class="QWidget" name="widget_2" native="true">
+              <layout class="QVBoxLayout" name="verticalLayout_4"/>
+             </widget>
+            </item>
+            <item>
+             <widget class="QWidget" name="widget_3" native="true">
+              <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0">
+               <item>
+                <widget class="QPushButton" name="button_LED">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">border: none;
+image: url(:/images/lights_off.svg);</string>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label">
+                 <property name="text">
+                  <string>电灯</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QWidget" name="widget_TMP" native="true">
+           <property name="styleSheet">
+            <string notr="true">.QWidget{
+border-radius:6px;
+/*薄荷绿*/
+background-color: #fff;
+}
+
+</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_6" stretch="1,0">
+            <property name="spacing">
+             <number>6</number>
+            </property>
+            <property name="leftMargin">
+             <number>9</number>
+            </property>
+            <property name="topMargin">
+             <number>9</number>
+            </property>
+            <property name="rightMargin">
+             <number>9</number>
+            </property>
+            <property name="bottomMargin">
+             <number>9</number>
+            </property>
+            <item>
+             <widget class="QChartView" name="widget_chartsTmp">
+              <property name="backgroundBrush">
+               <brush brushstyle="NoBrush">
+                <color alpha="255">
+                 <red>0</red>
+                 <green>0</green>
+                 <blue>0</blue>
+                </color>
+               </brush>
+              </property>
+              <property name="foregroundBrush">
+               <brush brushstyle="NoBrush">
+                <color alpha="255">
+                 <red>0</red>
+                 <green>0</green>
+                 <blue>0</blue>
+                </color>
+               </brush>
+              </property>
+              <property name="interactive">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_tmp">
+              <property name="text">
+               <string>当前室内温度：</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QWidget" name="widget_HUM" native="true">
+           <property name="styleSheet">
+            <string notr="true">.QWidget{
+border-radius:6px;
+/*薄荷绿*/
+background-color: #fff;
+}
+
+</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_7" stretch="1,0">
+            <item>
+             <widget class="QChartView" name="widget_chartsHum"/>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_hum">
+              <property name="text">
+               <string>当前室内相对湿度：</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </item>
      </layout>
     </widget>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QChartView</class>
+   <extends>QGraphicsView</extends>
+   <header>qchartview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
