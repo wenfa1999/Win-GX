@@ -21,6 +21,8 @@ Widget::Widget(QWidget *parent)
     this->setWindowFlags(Qt::FramelessWindowHint);
     this->setAttribute(Qt::WA_TranslucentBackground);
 
+    this->setWindowIcon(QIcon(":/images/logo.png"));
+
     connect(ui->btnMaximize, &QPushButton::clicked, this, &Widget::onBtnMaximizeClicked);
 
     connect(ui->btnMinimize, &QPushButton::clicked, this, &Widget::onBtnMinimizeClicked);
@@ -276,8 +278,9 @@ void Widget::mqttInit()
     m_client = new QMqttClient(this);
     m_client->setHostname("mqtt.gwf.icu");
     m_client->setPort(1883);
-    m_client->setClientId("win");
+    m_client->setClientId("win" + QUuid::createUuid().toString());
     m_client->connectToHost();
+    m_client->setAutoKeepAlive(true);
 
     connect(m_client, &QMqttClient::connected, this, [&](){
         qDebug() << "连接MQTT服务器成功";

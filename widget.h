@@ -17,6 +17,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QMargins>
+#include <QUuid>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
