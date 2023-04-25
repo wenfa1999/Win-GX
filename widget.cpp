@@ -295,23 +295,7 @@ void Widget::mqttReceive(const QByteArray &message, const QMqttTopicName &topic)
 
 void Widget::onBtnMaximizeClicked()
 {
-    if (Qt::WindowNoState == this->windowState())
-    {
-        ui->backgroundLayout->setMargin(0);
-        ui->btnMaximize->setStyleSheet("border-image: url(:/images/normal.svg);");
-        this->showMaximized();
-
-        seriesTmp->setPointsVisible(false);
-        seriesHum->setPointsVisible(false);
-
-        axisXTmp->setMin(0);
-        axisXTmp->setMax(100);
-        axisXTmp->setTickCount(21);
-        axisXHum->setMin(0);
-        axisXHum->setMax(100);
-        axisXHum->setTickCount(21);
-    }
-    else if (Qt::WindowMaximized == this->windowState())
+    if (Qt::WindowMaximized == this->windowState())
     {
         ui->backgroundLayout->setMargin(9);
         ui->btnMaximize->setStyleSheet("border-image: url(:/images/maximize.svg);");
@@ -326,6 +310,22 @@ void Widget::onBtnMaximizeClicked()
         axisXHum->setMin(temAxisXMin);
         axisXHum->setMax(humAxisXMax);
         axisXHum->setTickCount(11);
+    }
+    else
+    {
+        ui->backgroundLayout->setMargin(0);
+        ui->btnMaximize->setStyleSheet("border-image: url(:/images/normal.svg);");
+        this->showMaximized();
+
+        seriesTmp->setPointsVisible(false);
+        seriesHum->setPointsVisible(false);
+
+        axisXTmp->setMin(0);
+        axisXTmp->setMax(100);
+        axisXTmp->setTickCount(21);
+        axisXHum->setMin(0);
+        axisXHum->setMax(100);
+        axisXHum->setTickCount(21);
     }
 }
 
@@ -371,7 +371,7 @@ void Widget::mouseReleaseEvent(QMouseEvent *event)
 
 void Widget::mouseMoveEvent(QMouseEvent *event)
 {
-    if (event->buttons() & Qt::LeftButton  && isMoving && !this->isMaximized())
+    if (event->buttons() & Qt::LeftButton  && isMoving && (this->windowState() != Qt::WindowMaximized))
     {
         this->move(m_windowPos - (m_mousePos - event->globalPos()));
 
