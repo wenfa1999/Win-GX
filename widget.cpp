@@ -61,6 +61,11 @@ Widget::Widget(QWidget *parent)
             ui->widget_LED->setStyleSheet(".QWidget{ border-radius:6px;background-color: #f9f1db;}");
             isLightOn = true;
         }
+
+        if (m_client->state() == QMqttClient::Disconnected)
+        {
+            m_client->connectToHost();
+        }
     });
 }
 
@@ -88,17 +93,16 @@ void Widget::chartsInit()
     axisYHum->setMin(humAxisYMin);
     axisYHum->setMax(humAxisYMax);
     axisXHum->setTickCount(11);
-        axisXHum->setLabelFormat("%d");
+    axisXHum->setLabelFormat("%d");
     // 曲线
-    seriesTmp = new QSplineSeries();
+    seriesTmp = new QLineSeries();
     seriesTmp->setName("温度");
-//        seriesTmp->setPointLabelsVisible(true);
-        seriesTmp->setPointsVisible(true);
+    seriesTmp->setPointsVisible(true);
 
-    seriesHum = new QSplineSeries();
+    seriesHum = new QLineSeries();
     seriesHum->setName("湿度");
-//        seriesHum->setPointLabelsVisible(true);
-        seriesHum->setPointsVisible(true);
+    seriesHum->setPointsVisible(true);
+
     /// 图表
     // 温度
     chartForTmp = new QChart();
@@ -123,6 +127,9 @@ void Widget::chartsInit()
     ui->widget_chartsTmp->setRenderHint(QPainter::Antialiasing);
     ui->widget_chartsHum->setChart(chartForHum);
     ui->widget_chartsHum->setRenderHint(QPainter::Antialiasing);
+    // fix: 修复更新图表后存在残留(性能存疑)
+    ui->widget_chartsTmp->setViewportUpdateMode(QChartView::FullViewportUpdate);
+    ui->widget_chartsHum->setViewportUpdateMode(QChartView::FullViewportUpdate);
     /// 添加坐标轴
     // 温度
     seriesTmp->attachAxis(axisXTmp);
@@ -167,7 +174,6 @@ void Widget::analysisJson(void)
             {
                 if (statusObj["rfid"].isArray())
                 {
-                    qDebug() << "array";
                     m_rfidArray = statusObj["rfid"].toArray();
                     updateRfid();
                 }
@@ -204,60 +210,31 @@ void Widget::updateCharts(double tmp, double hum)
     ui->label_tmp->setText("当前室内温度：" + QString::number(tmp) + "℃");
     ui->label_hum->setText("当前室内相对湿度：" + QString::number(hum) + "%");
 
-    seriesTmp->append(tmpAxisXIndex++, tmp);
-    seriesHum->append(humAxisXIndex++, hum);
-
     // y轴缩放
-    temAxisYMin = temAxisYMin > tmp ? tmp - 1 : temAxisYMin;
-    temAxisYMax = temAxisYMax < tmp ? tmp + 1 : temAxisYMax;
-    humAxisYMin = humAxisYMin > hum ? hum - 1 : humAxisYMin;
-    humAxisYMax = humAxisYMax < hum ? hum + 1 : humAxisYMax;
-
-//    qDebug() << humAxisYMin;
-//    qDebug() << humAxisYMax;
-
+    temAxisYMin = temAxisYMin > tmp-1 ? tmp - 1 : temAxisYMin;
+    temAxisYMax = temAxisYMax < tmp+1 ? tmp + 1 : temAxisYMax;
+    humAxisYMin = humAxisYMin > hum-1 ? hum - 1 : humAxisYMin;
+    humAxisYMax = humAxisYMax < hum+1 ? hum + 1 : humAxisYMax;
     axisYTmp->setMin(temAxisYMin);
     axisYTmp->setMax(temAxisYMax);
     axisYHum->setMin(humAxisYMin);
     axisYHum->setMax(humAxisYMax);
 
-    if (this->isMaximized())
-    {
-        if (tmpAxisXIndex == 101)
-        {
-            seriesTmp->clear();
-            seriesHum->clear();
-        }
-        if (tmpAxisXIndex > temAxisXMax)
-        {
-            temAxisXMin += 5;
-            temAxisXMax += 5;
-
-            humAxisXMin += 5;
-            humAxisXMax += 5;
-        }
-        return ;
-    }
-
-
-    if (tmpAxisXIndex == 21)
+    // 复位
+    if (tmpAxisXIndex > 100)
     {
         seriesTmp->clear();
+        tmpAxisXIndex = 0;
         temAxisXMin = 0;
         temAxisXMax = 10;
-        tmpAxisXIndex = 0;
 
         seriesHum->clear();
+        humAxisXIndex = 0;
         humAxisXMin = 0;
         humAxisXMax = 10;
-        humAxisXIndex = 0;
-
-        axisXTmp->setMin(temAxisXMin);
-        axisXTmp->setMax(temAxisXMax);
-        axisXHum->setMin(humAxisXMin);
-        axisXHum->setMax(humAxisXMax);
     }
 
+    // x轴位移
     if (tmpAxisXIndex > temAxisXMax)
     {
         temAxisXMin += 5;
@@ -265,12 +242,21 @@ void Widget::updateCharts(double tmp, double hum)
 
         humAxisXMin += 5;
         humAxisXMax += 5;
+    }
 
+    if(!this->isMaximized())
+    {
         axisXTmp->setMin(temAxisXMin);
         axisXTmp->setMax(temAxisXMax);
         axisXHum->setMin(humAxisXMin);
         axisXHum->setMax(humAxisXMax);
     }
+
+    seriesTmp->append(tmpAxisXIndex, tmp);
+    seriesHum->append(humAxisXIndex, hum);
+
+    tmpAxisXIndex++;
+    humAxisXIndex++;
 }
 
 void Widget::mqttInit()
@@ -315,6 +301,9 @@ void Widget::onBtnMaximizeClicked()
         ui->btnMaximize->setStyleSheet("border-image: url(:/images/normal.svg);");
         this->showMaximized();
 
+        seriesTmp->setPointsVisible(false);
+        seriesHum->setPointsVisible(false);
+
         axisXTmp->setMin(0);
         axisXTmp->setMax(100);
         axisXTmp->setTickCount(21);
@@ -327,6 +316,9 @@ void Widget::onBtnMaximizeClicked()
         ui->backgroundLayout->setMargin(9);
         ui->btnMaximize->setStyleSheet("border-image: url(:/images/maximize.svg);");
         this->showNormal();
+
+        seriesTmp->setPointsVisible(true);
+        seriesHum->setPointsVisible(true);
 
         axisXTmp->setMin(temAxisXMin);
         axisXTmp->setMax(temAxisXMax);
@@ -379,9 +371,10 @@ void Widget::mouseReleaseEvent(QMouseEvent *event)
 
 void Widget::mouseMoveEvent(QMouseEvent *event)
 {
-    if (event->buttons() & Qt::LeftButton  && isMoving)
+    if (event->buttons() & Qt::LeftButton  && isMoving && !this->isMaximized())
     {
         this->move(m_windowPos - (m_mousePos - event->globalPos()));
+
         m_windowPos = this->pos();
         m_mousePos = event->globalPos();
     }

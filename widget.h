@@ -54,8 +54,8 @@ private:
 
     QChart *chartForTmp;
     QChart *chartForHum;
-    QSplineSeries *seriesTmp;  // 温度曲线
-    QSplineSeries *seriesHum;   // 湿度曲线
+    QLineSeries *seriesTmp;  // 温度曲线
+    QLineSeries *seriesHum;   // 湿度曲线
     QValueAxis *axisXTmp;
     QValueAxis *axisYTmp;
     QValueAxis *axisXHum;
